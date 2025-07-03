@@ -28,14 +28,14 @@ export function AppProvider({ value, children }) {
     setFetching(false);
   };
 
-  React.useEffect(() => {
-    window.onpopstate = async () => {
-      // Get the current url
-      const url = new URL(window.location.href, window.location.origin);
-      url.searchParams.append('ajax', true);
-      await fetchPageData(url);
-    };
-  }, []);
+  // React.useEffect(() => {
+  //   window.onpopstate = async () => {
+  //     // Get the current url
+  //     const url = new URL(window.location.href, window.location.origin);
+  //     url.searchParams.append('ajax', true);
+  //     await fetchPageData(url);
+  //   };
+  // }, []);
 
   const contextDispatchValue = useMemo(() => ({ setData, fetchPageData }), []);
   const contextValue = useMemo(() => ({ ...data, fetching }), [data, fetching]);
