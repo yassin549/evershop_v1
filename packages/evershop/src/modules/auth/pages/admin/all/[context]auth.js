@@ -8,11 +8,13 @@ export default async (request, response, delegate, next) => {
   if (userID === 1) {
     request.locals.user = {
       admin_user_id: 1,
+      uuid: 'a71d7a3d-32c8-442c-9a79-436035250d3c',
+      status: true,
       email: 'khoualdiyassin26@gmail.com',
-      status: 1,
-      full_name: 'Admin User'
+      full_name: 'Admin User',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
-    request.locals.widgets = [];
     return next();
   }
 
