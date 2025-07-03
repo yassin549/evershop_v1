@@ -37,7 +37,8 @@ export default async (request, response, delegate, next) => {
       response.status(OK);
       response.$body = {
         data: {
-          sid: request.sessionID
+          sid: request.sessionID,
+          dashboardUrl: '/'
         }
       };
       return next();
