@@ -13,7 +13,8 @@ export default async (request, response, delegate, next) => {
       admin_user_id: 1,
       email: 'khoualdiyassin26@gmail.com',
       status: 1,
-      full_name: 'Admin User'
+      full_name: 'Admin User',
+      widgets: []
     };
     return next();
   }
