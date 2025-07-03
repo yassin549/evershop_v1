@@ -1,7 +1,7 @@
 import { select, insert } from '@evershop/postgres-query-builder';
 import { v4 as uuidv4 } from 'uuid';
-import { pool } from '../../../../lib/postgres/connection.js';
-import { comparePassword, hashPassword } from '../../../../lib/util/password.js';
+import { pool } from '../../../lib/postgres/connection.js';
+import { comparePassword, hashPassword } from '../../../lib/util/password.js';
 
 export function loginUserWithEmail(email, password, callback) {
   const login = () => {
