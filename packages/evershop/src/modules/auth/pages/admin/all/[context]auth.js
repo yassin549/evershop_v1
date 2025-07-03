@@ -8,7 +8,7 @@ export default async (request, response, delegate, next) => {
     .from('admin_user')
     .where('admin_user_id', '=', userID)
     .and('status', '=', 1)
-    .load(pool);
+    .load();
 
   if (!user) {
     // The user may not be logged in, or the account may be disabled
