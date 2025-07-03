@@ -22,8 +22,7 @@ export function AppProvider({ value, children }) {
     // Update the entire context using immer
     setData(
       produce(data, (draff) => {
-        draff = dataResponse.eContext;
-        return draff;
+        Object.assign(draff, dataResponse.eContext);
       })
     );
     setFetching(false);
