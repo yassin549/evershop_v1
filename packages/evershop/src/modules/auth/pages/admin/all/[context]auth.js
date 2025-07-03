@@ -1,9 +1,8 @@
 import { select } from '@evershop/postgres-query-builder';
-import { buildUrl } from '@evershop/evershop/src/lib/router/buildUrl';
+import { buildUrl } from '@evershop/evershop/lib/router';
 
 export default async (request, response, delegate, next) => {
   const { userID } = request.session;
-  const pool = await getDb();
 
   // Handle the hardcoded admin user
   if (userID === 1) {
@@ -13,17 +12,7 @@ export default async (request, response, delegate, next) => {
       status: 1,
       full_name: 'Admin User'
     };
-    try {
-      // We need to load the widgets for the dashboard to appear.
-      request.locals.widgets = await select()
-        .from('widget')
-        .where('status', '=', 1)
-        .execute(pool);
-    } catch (e) {
-      console.error(e);
-      // If the query fails, provide an empty array to prevent a crash.
-      request.locals.widgets = [];
-    }
+    request.locals.widgets = [];
     return next();
   }
 
@@ -32,11 +21,13 @@ export default async (request, response, delegate, next) => {
     .from('admin_user')
     .where('admin_user_id', '=', userID)
     .and('status', '=', 1)
-    .load(pool);
+    .load();
 
   if (!user) {
     // The user may not be logged in, or the account may be disabled
+    // Logout the user
     request.logoutUser(() => {
+      // Check if current route is adminLogin
       if (
         request.currentRoute.id === 'adminLogin' ||
         request.currentRoute.id === 'adminLoginJson'
@@ -47,7 +38,7 @@ export default async (request, response, delegate, next) => {
       }
     });
   } else {
-    // Delete the password field from the user object
+    // Delete the password field
     delete user.password;
     request.locals.user = user;
     next();
