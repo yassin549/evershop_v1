@@ -1,11 +1,11 @@
-import { select } from '@evershop/postgres-query-builder';
-import { pool } from '../../../../../lib/postgres/connection.js';
-import { buildUrl } from '../../../../../lib/router/buildUrl.js';
+const { select } = require('@evershop/postgres-query-builder');
+const { pool } = require('@evershop/evershop/src/lib/postgres/connection');
+const { buildUrl } = require('@evershop/evershop/src/lib/router/buildUrl');
 
-export default async (request, response, delegate, next) => {
+module.exports = async (request, response, delegate, next) => {
   const { userID } = request.session;
 
-  // Check for our hardcoded admin user
+  // Handle the hardcoded admin user
   if (userID === 1) {
     request.locals.user = {
       admin_user_id: 1,
