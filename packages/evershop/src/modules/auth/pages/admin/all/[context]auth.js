@@ -7,19 +7,27 @@ export default async (request, response, delegate, next) => {
 
   // Check for our hardcoded admin user
   if (userID === 1) {
-    // This is our hardcoded admin.
-    // Manually set the user object and skip the database check.
     request.locals.user = {
       admin_user_id: 1,
       email: 'khoualdiyassin26@gmail.com',
       status: 1,
       full_name: 'Admin User'
     };
-    request.locals.widgets = await select().from('widget').where('status', '=', 1).execute(pool);
+    try {
+      // We need to load the widgets for the dashboard to appear.
+      request.locals.widgets = await select()
+        .from('widget')
+        .where('status', '=', 1)
+        .execute(pool);
+    } catch (e) {
+      console.error(e);
+      // If the query fails, provide an empty array to prevent a crash.
+      request.locals.widgets = [];
+    }
     return next();
   }
 
-  // Load the user from the database for any other user
+  // For all other users, load from the database
   const user = await select()
     .from('admin_user')
     .where('admin_user_id', '=', userID)
@@ -28,9 +36,7 @@ export default async (request, response, delegate, next) => {
 
   if (!user) {
     // The user may not be logged in, or the account may be disabled
-    // Logout the user
     request.logoutUser(() => {
-      // Check if current route is adminLogin
       if (
         request.currentRoute.id === 'adminLogin' ||
         request.currentRoute.id === 'adminLoginJson'
@@ -41,7 +47,7 @@ export default async (request, response, delegate, next) => {
       }
     });
   } else {
-    // Delete the password field
+    // Delete the password field from the user object
     delete user.password;
     request.locals.user = user;
     next();
