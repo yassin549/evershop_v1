@@ -31,16 +31,18 @@ export function loginUserWithEmail(email, password, callback) {
     .where('email', 'ILIKE', email)
     .and('status', '=', 1)
     .load(pool)
-    .then(async (user) => {
+    .then((user) => {
       if (!user) {
-        callback(new Error('Invalid email or password'));
-        return;
+        return Promise.reject(new Error('Invalid email or password'));
       }
-      const result = await comparePassword(password, user.password);
-      if (!result) {
-        callback(new Error('Invalid email or password'));
-        return;
-      }
+      return comparePassword(password, user.password).then((result) => {
+        if (!result) {
+          return Promise.reject(new Error('Invalid email or password'));
+        }
+        return user;
+      });
+    })
+    .then((user) => {
       this.session.userID = user.admin_user_id;
       delete user.password;
       this.locals.user = user;
