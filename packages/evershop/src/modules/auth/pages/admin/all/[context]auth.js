@@ -1,9 +1,9 @@
 import { select } from '@evershop/postgres-query-builder';
-import { pool } from '@evershop/evershop/src/lib/postgres/connection.js';
-import { buildUrl } from '@evershop/evershop/src/lib/router/buildUrl.js';
+import { buildUrl } from '@evershop/evershop/src/lib/router/buildUrl';
 
 export default async (request, response, delegate, next) => {
   const { userID } = request.session;
+  const pool = await getDb();
 
   // Handle the hardcoded admin user
   if (userID === 1) {
