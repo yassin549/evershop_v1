@@ -15,7 +15,10 @@ export default async (request, response, delegate, next) => {
       status: 1,
       full_name: 'Admin User'
     };
-    request.locals.widgets = [];
+    request.locals.user.widgets = await select()
+      .from('widget')
+      .where('status', '=', 1)
+      .execute(pool);
     return next();
   }
 
