@@ -4,7 +4,21 @@ import { buildUrl } from '../../../../../lib/router/buildUrl.js';
 
 export default async (request, response, delegate, next) => {
   const { userID } = request.session;
-  // Load the user from the database
+
+  // Check for our hardcoded admin user
+  if (userID === 1) {
+    // This is our hardcoded admin.
+    // Manually set the user object and skip the database check.
+    request.locals.user = {
+      admin_user_id: 1,
+      email: 'khoualdiyassin26@gmail.com',
+      status: 1,
+      full_name: 'Admin User'
+    };
+    return next();
+  }
+
+  // Load the user from the database for any other user
   const user = await select()
     .from('admin_user')
     .where('admin_user_id', '=', userID)
