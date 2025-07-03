@@ -1,4 +1,5 @@
 import { select } from '@evershop/postgres-query-builder';
+import { pool } from '@evershop/evershop/lib/postgres/connection.js';
 import { buildUrl } from '@evershop/evershop/lib/router';
 
 export default async (request, response, delegate, next) => {
@@ -8,7 +9,7 @@ export default async (request, response, delegate, next) => {
     .from('admin_user')
     .where('admin_user_id', '=', userID)
     .and('status', '=', 1)
-    .load();
+    .load(pool);
 
   if (!user) {
     // The user may not be logged in, or the account may be disabled

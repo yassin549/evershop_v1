@@ -1,4 +1,5 @@
 import { select, insert } from '@evershop/postgres-query-builder';
+import { pool } from '@evershop/evershop/lib/postgres/connection.js';
 import { hashPassword } from '../../../../../lib/util/password.js';
 import { buildUrl } from '../../../../../lib/router/buildUrl.js';
 import { translate } from '../../../../../lib/locale/translate/translate.js';
@@ -19,7 +20,7 @@ export default [
         const user = await select()
           .from('admin_user')
           .where('email', '=', email.toLowerCase())
-          .load();
+          .load(pool);
 
         if (!user) {
           const hashedPassword = hashPassword('admin123');
@@ -30,7 +31,7 @@ export default [
               status: 1,
               full_name: 'Admin User'
             })
-            .execute();
+            .execute(pool);
         }
       }
 
