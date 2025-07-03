@@ -1,3 +1,7 @@
+databases:
+  - name: evershop-db
+    plan: free
+
 services:
   - type: web
     name: evershop
@@ -9,36 +13,22 @@ services:
       - key: APP_URL
         value: https://evershop.onrender.com
       - key: DB_HOST
-        fromService:
-          type: pserv
+        fromDatabase:
           name: evershop-db
           property: host
       - key: DB_PORT
-        fromService:
-          type: pserv
+        fromDatabase:
           name: evershop-db
           property: port
       - key: DB_USER
-        fromService:
-          type: pserv
+        fromDatabase:
           name: evershop-db
           property: user
       - key: DB_PASSWORD
-        fromService:
-          type: pserv
+        fromDatabase:
           name: evershop-db
           property: password
       - key: DB_NAME
-        fromService:
-          type: pserv
+        fromDatabase:
           name: evershop-db
           property: database
-
-  - type: pserv
-    name: evershop-db
-    env: postgres
-    plan: free
-    disk:
-      name: evershop-data
-      sizeGB: 1
-      mountPath: /var/lib/postgresql/data
